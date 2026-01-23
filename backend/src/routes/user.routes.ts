@@ -1,33 +1,47 @@
 import { Router } from "express";
-import { Request, Response } from "express";
 import { authenticate } from "@/middleware/auth.middleware";
-import { asyncHandler } from "@/middleware/errorHandler";
+import { validate } from "@/middleware/validate.middleware";
+import {
+  getMeHandler,
+  getPreferencesHandler,
+  updatePreferencesHandler,
+} from "@/controllers/user.controller";
+import { preferencesSchema } from "@/schemas/preferences.schema";
 
 /**
  * User Routes (Protected)
  *
- * All routes here require authentication
+ * All routes require authentication
+ *
+ * GET  /api/user/me           - Get user profile
+ * GET  /api/user/preferences  - Get user preferences
+ * PUT  /api/user/preferences  - Update preferences (onboarding)
  */
 
 const router = Router();
 
 /**
  * GET /api/user/me
- * Get current user's profile
- * Protected route - requires valid JWT token
+ * Get current user's full profile
  */
-router.get(
-  "/me",
+router.get("/me", authenticate, getMeHandler);
+
+/**
+ * GET /api/user/preferences
+ * Get user preferences
+ * Returns null if onboarding not completed
+ */
+router.get("/preferences", authenticate, getPreferencesHandler);
+
+/**
+ * PUT /api/user/preferences
+ * Update user preferences (onboarding)
+ */
+router.put(
+  "/preferences",
   authenticate,
-  asyncHandler(async (req: Request, res: Response) => {
-    // req.user is available because of authenticate middleware
-    res.json({
-      success: true,
-      data: {
-        user: req.user,
-      },
-    });
-  }),
+  validate(preferencesSchema),
+  updatePreferencesHandler,
 );
 
 export default router;
