@@ -24,6 +24,32 @@ export const prisma =
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   });
 
+/**
+ * Database lifecycle helpers
+ *
+ * Keep connection concerns in one place so the app entrypoint (`index.ts`)
+ * can focus on orchestration (boot + shutdown).
+ */
+export async function connectDB(): Promise<void> {
+  try {
+    await prisma.$connect();
+    console.log("[database] Connected");
+  } catch (error) {
+    console.error("[database] Connection failed", error);
+    throw error;
+  }
+}
+
+export async function disconnectDB(): Promise<void> {
+  try {
+    await prisma.$disconnect();
+    console.log("[database] Disconnected");
+  } catch (error) {
+    console.error("[database] Disconnect failed", error);
+    throw error;
+  }
+}
+
 // Store instance globally in development to survive hot reloads
 if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;
