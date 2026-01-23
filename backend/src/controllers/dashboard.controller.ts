@@ -5,14 +5,14 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * Dashboard Controller
- * 
+ *
  * Handles requests for dashboard data (prices, news, AI insights)
  */
 
 /**
  * GET /api/dashboard/prices
  * Get cryptocurrency prices based on user preferences
- * 
+ *
  * Protected route - requires authentication
  */
 export const getPricesHandler = asyncHandler(
@@ -28,7 +28,7 @@ export const getPricesHandler = asyncHandler(
 
     // 2. Extract coin IDs from preferences, or use defaults
     let coinIds = ["bitcoin", "ethereum", "cardano", "solana"];
-    
+
     if (user?.preferences && typeof user.preferences === "object") {
       const prefs = user.preferences as any;
       if (prefs.coins && Array.isArray(prefs.coins)) {
