@@ -4,18 +4,13 @@
  * Handles integration with CoinGecko API for cryptocurrency data
  */
 
-interface CoinPrice {
-  id: string;
-  symbol: string;
-  name: string;
-  current_price: number;
-  price_change_24h: number;
-  price_change_percentage_24h: number;
-  market_cap: number;
-  total_volume: number;
-  image: string;
-}
+import { CoinPrice } from "@/types/crypto.types";
 
+/**
+ * CoinGecko API response shape
+ * This is an implementation detail - we transform this into CoinPrice
+ * Kept private to this service to encapsulate the external API dependency
+ */
 interface CoinGeckoResponse {
   id: string;
   symbol: string;
