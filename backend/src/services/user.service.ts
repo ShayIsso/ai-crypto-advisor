@@ -1,8 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { AppError } from "@/middleware/errorHandler";
-import type {
-  PreferencesInput,
-  UserPreferences,
+import {
+  preferencesSchema,
+  type PreferencesInput,
+  type UserPreferences,
 } from "@/schemas/preferences.schema";
 
 /**
@@ -10,6 +11,17 @@ import type {
  *
  * Handles user-related operations (preferences, profile)
  */
+
+/**
+ * Default coins when user has no preferences or invalid data
+ * Used as fallback throughout the app
+ */
+export const DEFAULT_COINS: readonly string[] = [
+  "bitcoin",
+  "ethereum",
+  "cardano",
+  "solana",
+];
 
 /**
  * Get user preferences
@@ -31,6 +43,31 @@ export const getUserPreferences = async (
 
   // Prisma returns Json as any, so we need to cast it
   return user.preferences as unknown as UserPreferences;
+};
+
+/**
+ * Get user's coin preferences with validation and fallback
+ *
+ * Uses Zod safeParse to validate DB data at runtime.
+ * Returns default coins if preferences are missing or invalid.
+ *
+ * @param userId - User ID
+ * @returns Array of coin IDs (validated or defaults)
+ */
+export const getUserCoins = async (userId: number): Promise<string[]> => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { preferences: true },
+  });
+
+  if (user?.preferences && typeof user.preferences === "object") {
+    const result = preferencesSchema.safeParse(user.preferences);
+    if (result.success) {
+      return result.data.coins;
+    }
+  }
+
+  return [...DEFAULT_COINS];
 };
 
 /**
