@@ -39,7 +39,7 @@ app.use(express.json({ limit: "10mb" }));
  * Request logging (development only)
  */
 if (process.env.NODE_ENV === "development") {
-  app.use((req: Request, res: Response, next: NextFunction) => {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
     console.log(`${req.method} ${req.path}`);
     next();
   });
@@ -53,7 +53,7 @@ if (process.env.NODE_ENV === "development") {
  * Health Check Endpoint
  * Useful for monitoring and deployment platforms
  */
-app.get("/health", (req: Request, res: Response) => {
+app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     message: "Server is running",
@@ -65,7 +65,7 @@ app.get("/health", (req: Request, res: Response) => {
 /**
  * API Root
  */
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_req: Request, res: Response) => {
   res.json({
     success: true,
     message: "AI Crypto Advisor API",

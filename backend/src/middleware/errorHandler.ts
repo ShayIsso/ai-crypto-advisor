@@ -31,7 +31,7 @@ export const errorHandler = (
   err: Error | AppError,
   req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ) => {
   // Default to 500 Internal Server Error
   let statusCode = 500;
