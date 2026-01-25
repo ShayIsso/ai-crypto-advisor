@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { authenticate } from "@/middleware/auth.middleware";
-import { getPricesHandler } from "@/controllers/dashboard.controller";
+import {
+  getPricesHandler,
+  getNewsHandler,
+} from "@/controllers/dashboard.controller";
 
 /**
  * Dashboard Routes
@@ -20,8 +23,11 @@ const router = Router();
  */
 router.get("/prices", authenticate, getPricesHandler);
 
-// TODO: Add news route here
-// router.get("/news", authenticate, getNewsHandler);
+/**
+ * GET /api/dashboard/news
+ * Get cryptocurrency news filtered by user preferences
+ */
+router.get("/news", authenticate, getNewsHandler);
 
 // TODO: Add AI insights route here
 // router.get("/ai", authenticate, getAIInsightsHandler);

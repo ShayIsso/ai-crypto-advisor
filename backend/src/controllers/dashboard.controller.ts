@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/errorHandler";
 import { getCryptoPrices } from "@/services/crypto.service";
-import { prisma } from "@/lib/prisma";
+import { getCryptoNews } from "@/services/news.service";
+import { getUserCoins } from "@/services/user.service";
 
 /**
  * Dashboard Controller
@@ -17,34 +18,49 @@ import { prisma } from "@/lib/prisma";
  */
 export const getPricesHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    // req.user is available from authenticate middleware
-    const userId = req.user!.id;
+    const coins = await getUserCoins(req.user!.id);
+    const prices = await getCryptoPrices(coins);
 
-    // 1. Get user preferences to know which coins to show
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { preferences: true },
-    });
-
-    // 2. Extract coin IDs from preferences, or use defaults
-    let coinIds = ["bitcoin", "ethereum", "cardano", "solana"];
-
-    if (user?.preferences && typeof user.preferences === "object") {
-      const prefs = user.preferences as any;
-      if (prefs.coins && Array.isArray(prefs.coins)) {
-        coinIds = prefs.coins;
-      }
-    }
-
-    // 3. Fetch prices from CoinGecko API
-    const prices = await getCryptoPrices(coinIds);
-
-    // 4. Return response
     res.json({
       success: true,
       data: {
         prices,
         count: prices.length,
+      },
+    });
+  },
+);
+
+/**
+ * GET /api/dashboard/news
+ * Get cryptocurrency news filtered by user preferences
+ *
+ * Protected route - requires authentication
+ */
+export const getNewsHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const coins = await getUserCoins(req.user!.id);
+    const allNews = await getCryptoNews(50); // Fetch more for filtering
+
+    // Filter news that mention user's coins
+    let filteredNews = allNews.filter((article) =>
+      article.currencies.some((currency) => coins.includes(currency)),
+    );
+
+    // If no matches, show all news (better than empty)
+    if (filteredNews.length === 0) {
+      filteredNews = allNews;
+    }
+
+    // Limit to 10 most recent
+    const news = filteredNews.slice(0, 10);
+
+    res.json({
+      success: true,
+      data: {
+        news,
+        count: news.length,
+        filtered: filteredNews.length < allNews.length,
       },
     });
   },
