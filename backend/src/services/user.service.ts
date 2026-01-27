@@ -71,6 +71,40 @@ export const getUserCoins = async (userId: number): Promise<string[]> => {
 };
 
 /**
+ * Get user's dashboard preferences (coins + investorType)
+ *
+ * Efficient helper that fetches both coins and investorType in one DB call.
+ * Uses Zod safeParse to validate DB data at runtime.
+ * Returns defaults if preferences are missing or invalid.
+ *
+ * @param userId - User ID
+ * @returns Object with coins array and investorType string (validated or defaults)
+ */
+export const getUserDashboardPreferences = async (userId: number) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { preferences: true },
+  });
+
+  // Validate and provide defaults
+  if (user?.preferences && typeof user.preferences === "object") {
+    const result = preferencesSchema.safeParse(user.preferences);
+    if (result.success) {
+      return {
+        coins: result.data.coins,
+        investorType: result.data.investorType,
+      };
+    }
+  }
+
+  // Fallback
+  return {
+    coins: [...DEFAULT_COINS],
+    investorType: "HODLer" as const,
+  };
+};
+
+/**
  * Update user preferences (onboarding)
  *
  * @param userId - User ID

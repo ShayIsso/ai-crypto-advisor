@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import { asyncHandler } from "@/middleware/errorHandler";
 import { getCryptoPrices } from "@/services/crypto.service";
 import { getCryptoNews } from "@/services/news.service";
-import { getUserCoins } from "@/services/user.service";
+import {
+  getUserCoins,
+  getUserDashboardPreferences,
+} from "@/services/user.service";
+import { generateCryptoInsight } from "@/services/ai.service";
 
 /**
  * Dashboard Controller
@@ -63,5 +67,22 @@ export const getNewsHandler = asyncHandler(
         filtered: filteredNews.length < allNews.length,
       },
     });
+  },
+);
+
+/**
+ * GET /api/dashboard/ai
+ * Get personalized AI crypto insight based on user preferences
+ *
+ * Protected route - requires authentication
+ */
+
+export const getAIInsightHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { coins, investorType } = await getUserDashboardPreferences(
+      req.user!.id,
+    );
+    const insight = await generateCryptoInsight(investorType, coins);
+    res.json({ success: true, data: { insight } });
   },
 );

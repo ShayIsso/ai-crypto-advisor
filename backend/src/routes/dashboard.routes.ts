@@ -3,13 +3,14 @@ import { authenticate } from "@/middleware/auth.middleware";
 import {
   getPricesHandler,
   getNewsHandler,
+  getAIInsightHandler,
 } from "@/controllers/dashboard.controller";
 
 /**
  * Dashboard Routes
- * 
+ *
  * All routes require authentication
- * 
+ *
  * GET /api/dashboard/prices - Get crypto prices
  * GET /api/dashboard/news   - Get crypto news (TODO: implement)
  * GET /api/dashboard/ai     - Get AI insights (TODO: implement)
@@ -30,6 +31,6 @@ router.get("/prices", authenticate, getPricesHandler);
 router.get("/news", authenticate, getNewsHandler);
 
 // TODO: Add AI insights route here
-// router.get("/ai", authenticate, getAIInsightsHandler);
+router.get("/ai", authenticate, getAIInsightHandler);
 
 export default router;
