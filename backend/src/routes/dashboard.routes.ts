@@ -4,6 +4,7 @@ import {
   getPricesHandler,
   getNewsHandler,
   getAIInsightHandler,
+  getMemesHandler,
 } from "@/controllers/dashboard.controller";
 
 /**
@@ -30,7 +31,15 @@ router.get("/prices", authenticate, getPricesHandler);
  */
 router.get("/news", authenticate, getNewsHandler);
 
-// TODO: Add AI insights route here
+/**
+ * GET /api/dashboard/ai
+ * Get AI-generated crypto insights personalized to user preferences
+ */
 router.get("/ai", authenticate, getAIInsightHandler);
 
+/**
+ * GET /api/dashboard/memes
+ * Get crypto memes
+ */
+router.get("/memes", authenticate, getMemesHandler);
 export default router;

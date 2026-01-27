@@ -23,7 +23,7 @@ export interface CoinPrice {
 
 /**
  * Cryptocurrency news article
- * TODO: Implement when building news service
+ * Done: Implement when building news service
  */
 export interface NewsArticle {
   id: string;
@@ -37,11 +37,16 @@ export interface NewsArticle {
 
 /**
  * AI-generated crypto insight
- * TODO: Implement when building AI insight service
+ * Done: Implement when building AI insight service
  */
 export interface CryptoInsight {
   date: string;
   content: string;
   coins_mentioned: string[];
   generated_at: string;
+}
+
+export interface CryptoMeme {
+  id: string;
+  url: string;
 }

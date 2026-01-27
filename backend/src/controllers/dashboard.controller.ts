@@ -7,6 +7,7 @@ import {
   getUserDashboardPreferences,
 } from "@/services/user.service";
 import { generateCryptoInsight } from "@/services/ai.service";
+import { getCryptoMemes } from "@/services/meme.service";
 
 /**
  * Dashboard Controller
@@ -84,5 +85,27 @@ export const getAIInsightHandler = asyncHandler(
     );
     const insight = await generateCryptoInsight(investorType, coins);
     res.json({ success: true, data: { insight } });
+  },
+);
+
+// Fix the handler name and implement it
+/**
+ * GET /api/dashboard/memes
+ * Get crypto memes
+ *
+ * Protected route - requires authentication
+ */
+export const getMemesHandler = asyncHandler(
+  async (_req: Request, res: Response) => {
+    // Get memes (10 by default)
+    const memes = await getCryptoMemes(10, "crypto");
+
+    res.json({
+      success: true,
+      data: {
+        memes,
+        count: memes.length,
+      },
+    });
   },
 );
