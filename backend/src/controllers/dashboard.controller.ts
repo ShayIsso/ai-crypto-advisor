@@ -98,7 +98,7 @@ export const getAIInsightHandler = asyncHandler(
 export const getMemesHandler = asyncHandler(
   async (_req: Request, res: Response) => {
     // Get memes (10 by default)
-    const memes = await getCryptoMemes(10, "crypto");
+    const memes = await getCryptoMemes(10, "bitcoin");
 
     res.json({
       success: true,
