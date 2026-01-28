@@ -13,6 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum VoteSection {
+  prices
+  news
+  ai
+  memes
+}
+
 model User {
   id          Int      @id @default(autoincrement())
   email       String   @unique
@@ -25,12 +32,12 @@ model User {
 }
 
 model Vote {
-  id        Int      @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  section   String   // Which dashboard section
-  vote      Boolean  // true/false
-  createdAt DateTime @default(now())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  section   VoteSection // "prices", "news", "ai", "memes"
+  vote      Boolean     // true = upvote, false = downvote
+  createdAt DateTime    @default(now())
 
   @@index([userId])
   @@index([section])
